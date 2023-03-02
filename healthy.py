@@ -1,7 +1,7 @@
 import datetime
 from email.header import Header
 from email.mime.text import MIMEText
-from selenium.common import TimeoutException
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -29,15 +29,20 @@ def upload(username, password):
     # login
     driver = webdriver.Chrome(options=options)
     driver.get("http://smse.fun-master.cn/report/login")
-    wait = WebDriverWait(driver, 60)
+    wait1 = WebDriverWait(driver, 120)
+    print("登录")
     driver.find_element(By.ID, 'stu_no').send_keys(username)
     driver.find_element(By.ID, 'password').send_keys(password)
     driver.find_element(By.ID, 'sub').click()
     try:
-        wait.until(EC.presence_of_element_located((By.ID, "mor2")))
-    except TimeoutException:
+        wait1.until(EC.presence_of_element_located((By.ID, "mor2")))
+        print("登录成功")
+    except TimeoutException as e:
+        print("登录失败")
+        print(e)
         return False
 
+    print("健康申报")
     driver.find_element(By.ID, "mor2").click()
     driver.find_element(By.ID, "non2").click()
     driver.find_element(By.ID, "yes72").click()
@@ -45,9 +50,13 @@ def upload(username, password):
     driver.find_element(By.ID, "chengnuo").click()
     driver.find_element(By.CLASS_NAME, "i-submit").click()
 
+    wait2 = WebDriverWait(driver, 120)
     try:
-        wait.until(EC.text_to_be_present_in_element_value((By.TAG_NAME, "p"), "今日信息已提交，感谢您的配合"))
-    except TimeoutException:
+        wait2.until(EC.text_to_be_present_in_element_value((By.TAG_NAME, "p"), "今日信息已提交，感谢您的配合"))
+        print("健康申报成功")
+    except TimeoutException as e:
+        print("健康申报失败")
+        print(e)
         return False
     return True
 
