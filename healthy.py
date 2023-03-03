@@ -52,7 +52,7 @@ def upload(username, password):
 
     wait2 = WebDriverWait(driver, 120)
     try:
-        wait2.until(EC.text_to_be_present_in_element_value((By.TAG_NAME, "p"), "今日信息已提交，感谢您的配合"))
+        wait2.until(EC.text_to_be_present_in_element((By.CLASS_NAME, "pop-up"), "今日信息已提交"))
         print("健康申报成功")
     except TimeoutException as e:
         print("健康申报失败")
